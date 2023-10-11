@@ -1,0 +1,21 @@
+.addButton{
+    /* margin-top:.5rem!important; */
+    cursor: pointer;
+    border-radius: 5px;
+    text-transform: uppercase;
+    padding: 7px 20px;
+    margin: 15px;
+    background-color: lightgreen;
+    color: #fff;
+    font-size: large;
+    
+}
+.delete {
+   background-color: red;
+   color: #fff;
+   padding: 10px;
+   margin-bottom: 2px;
+   border-radius: 10px;
+   cursor: pointer;
+   
+}
