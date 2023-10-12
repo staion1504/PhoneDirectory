@@ -1,50 +1,65 @@
-import React, { useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import AddSubscriber from "./AddSubscriber";
 import ShowSubscriber from "./ShowSubscriber";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-
+import  {SubscriberCountContext}  from "./SubscriberCountContext";
+import Footer from "./Footer";
+import { type } from "@testing-library/user-event/dist/type";
 export default function PhoneDirectory() {
-  const [sublist, setSublist] = useState([
-    {
-      id: 1,
-      name: "saiteja",
-      phone: "9182983597",
-    },
-    {
-      id: 2,
-      name: "srishti",
-      phone: "9898989898",
-    },
-  ]);
+  const [sublist, setSublist] = useState([]);
 
-  function addSubscriberHandler(newsub) {
-    // Use the spread operator to create a new array instead of modifying the existing one
-    const updatedSublist = [...sublist];
-    if (updatedSublist.length > 0) {
-      newsub.id = updatedSublist[updatedSublist.length - 1].id + 1;
-    } else {
-      newsub.id = 1;
-    }
-    updatedSublist.push(newsub);
-    setSublist(updatedSublist);
-  }
-  function deleteHandler(id){
-    
-    let list =[...sublist];
-    let index=0;
-    // console.log(list);
-    list.forEach((item,i)=>{
-        if(item.id==id){
-            index=i;
-        }
+   async function LoadData(){
+    const input =await fetch("http://localhost:7081/contacts",{
+      
+        method:'GET',
+
     })
-    // console.log(list);
-     list.splice(index,1);
-     setSublist(list);
+
+    const data=await input.json();
+
+
+    setSublist(data);
+   }
+   useEffect(()=>{
+      
+    
+     LoadData();
+
+
+   },[])
+   
+   
+    
+
+
+
+  async function addSubscriberHandler(newsub) {
+    
+    const response=await fetch("http://localhost:7081/contacts",{
+      method:'POST',
+      headers:{
+        "Content-Type":'application/json'
+      },
+      body:JSON.stringify(newsub)
+    })
+    
+    await response.json();
+    await LoadData();
+
+
+  }
+  async function deleteHandler(id){
+    
+    const response=await fetch("http://localhost:7081/contacts/"+id,{
+      method:'DELETE'
+    })
+    const data=await response.json();
+    LoadData();
      
 
   }
   return (
+    <Fragment>
     <Router>
       <div className="App">
     
@@ -62,5 +77,9 @@ export default function PhoneDirectory() {
         </Routes>
       </div>
     </Router>
+    <SubscriberCountContext.Provider  value={sublist.length}>
+     <Footer/>
+    </SubscriberCountContext.Provider> 
+    </Fragment>
   );
 }
